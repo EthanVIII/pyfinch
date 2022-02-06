@@ -1,0 +1,9 @@
+
+PYFINCH is an attempt at a computer simulation of artificial life.
+
+Computer programs (Pyfinches) will be constructed out of a custom instruction set and compete for time and space. 
+Mutation, self-replication, and recombination will hopefully result in evolutionary traits. 
+Similar programs include Tierra and Avida. Avida is sometimes used for evolutionary biology research.
+
+PYFINCH is expected to be quite slow as it is run on abstract structures.
+For more information about PYFINCH please view the README. 

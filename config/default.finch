@@ -1,0 +1,5 @@
+
+# Default configuration for the a finch run.
+ORG org1
+LEXOME default
+SIZE 200 
