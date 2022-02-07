@@ -1,102 +1,102 @@
-h-alloc    # Allocate space for child
-h-search   # Locate the end of the organism
-nop-C      #
-    
-nop-A      #
-mov-head   # Place write-head at beginning of offspring.
-nop-C      #
-nop-C      #
-   # not an op
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-nop-C      #
-h-search   # Mark the beginning of the copy loop
-h-copy     # Do the copy
-if-label   # If we're done copying....
-nop-C      #
-nop-A      #
-h-divide   #    ...divide!
-mov-head   # Otherwise, loop back to the beginning of the copy loop.
-nop-A      # End label.
-nop-B      #
+h_alloc    # Allocate space for child
+h_search   # Locate the end of the organism
+nop_C      #
+# not an op 1 
+nop_A      #
+mov_head   # Place write_head at beginning of offspring.
+nop_C      #
+nop_C      #
+  # not an op 2
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+nop_C      #
+h_search   # Mark the beginning of the copy loop
+h_copy     # Do the copy
+if_label   # If we're done copying....
+nop_C      #
+nop_A      #
+h_divide   #    ...divide!
+mov_head   # Otherwise, loop back to the beginning of the copy loop.
+nop_A      # End label.
+nop_B      #
