@@ -1,24 +1,23 @@
 from visual import pretty
 
-def pre_process() -> bool:
+def pre_process() -> tuple[list[list[str]],list[str]]:
     parsed = bool
-    org_names, lexomes_names = list[str], list[str]
-    orgs, lexomes = list[list[str]],list[list[str]]
-    orgs, lexomes = [], []
+    org_names, lexome_name = list[str], str
+    orgs, lexome = list[list[str]],list[str]
+    orgs, lexome = [], []
 
     # Parses Config File Once and all at once.
-    org_names, lexomes_names = finch_parser("default")
+    org_names, lexome_name = finch_parser("default")
     pretty("INFO","Parsed PYFINCH config")
     
     # Parses Lexome Set
-    for lexome_name in lexomes_names:
-        try:
-            f = open("lexome\{}.cfg".format(lexome_name),'r',encoding="utf-8") 
-        except:
-            pretty("PANIC","{} was not found in lexome folder".format(lexome_name))
-        lines: list[str] = f.readlines()
-        f.close()
-        lexomes.append(lexome_parser(lines))
+    try:
+        f = open("lexome\{}.cfg".format(lexome_name),'r',encoding="utf-8") 
+    except:
+        pretty("PANIC","{}.cfg was not found in lexome folder".format(lexome_name))
+    lines: list[str] = f.readlines()
+    f.close()
+    lexome = lexome_parser(lines)
     pretty("INFO","Parsed lexome sets")
 
     # Parses Organism - Checks lexome for errors.
@@ -32,11 +31,11 @@ def pre_process() -> bool:
         temp_org: list[str] = org_parser(lines)
         if len(temp_org) == 0:
             pretty("WARNING","There is no lexome for this organism ({})".format(org_name))
-        if not org_check(lexomes[0],temp_org):
+        if not org_check(lexome,temp_org):
             pretty("PANIC","The lexome for this organism ({}) contains Ops that are not a part of the Lexome Set".format(org_name))
         orgs.append(temp_org)
     pretty("INFO", "Parsed organism lexomes")
-    return True
+    return (orgs,lexome)
 
 def org_check(lexome_set: list[str],org: list[str]) -> bool:
     for x in org:
@@ -73,16 +72,16 @@ def lexome_parser(ops: list[str]) -> list[str]:
             lexome_intermediary.append(o_split[index+1])
     return lexome_intermediary
 
-# Parses and checks config file. File has to be in a subfolder config\default.finch.
+# Parses and checks config file. File has to be in a subfolder config\default.cfg.
 # TODO implement changes for this method.
-def finch_parser(name: str) -> tuple[list[str],list[str]]:
+def finch_parser(name: str) -> tuple[list[str],str]:
     try:
-        with open("config\{}.finch".format(name),'r',encoding='utf-8') as f:
+        with open("config\{}.cfg".format(name),'r',encoding='utf-8') as f:
             lines: list[str] = f.readlines()
     except:
         pretty("PANIC", "Finch config was not found in config subfolder.")
     org_names: list[str] = []
-    lexome_names: list[str] = []
+    lexome_name: str = ""
     for row, line in enumerate(lines):       
         entry: list[str] = line.split(" ")
         if len(entry) == 1 and entry[0] != '\n':
@@ -93,7 +92,7 @@ def finch_parser(name: str) -> tuple[list[str],list[str]]:
             case "#":
                 pass
             case "LEXOME":
-                lexome_names.append(entry[1].strip())
+                lexome_name = entry[1].strip()
             #TODO Implement Size.
             case "SIZE":
                 pass
@@ -101,4 +100,4 @@ def finch_parser(name: str) -> tuple[list[str],list[str]]:
                 org_names.append(entry[1].strip())
             case _:
                 pretty("PANIC","Finch Config contains unknown command in line {} and command {}".format(row,entry[0]))
-    return (org_names,lexome_names)
+    return (org_names,lexome_name)

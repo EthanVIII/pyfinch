@@ -1,7 +1,13 @@
-from visual import pretty
-
 def main() -> None:
     runInterface()
+
+def run_sim() -> None:
+    orgs, lexome = list[list[str]],list[str]
+    orgs, lexome = preprocessor.pre_process()
+    lexome_dict: dict = binary.to_dict(lexome)
+    print(lexome_dict)
+    lexome_orgs: list[bytearray] = []
+    quit()
 
 def runInterface() -> None:
     buffer: str = ""
@@ -11,14 +17,13 @@ def runInterface() -> None:
     for i, (option,_) in enumerate(optionHandler(get=True)):
         buffer += "[" + str(i) +  "]: " + option + "\n"
     while True:
-        visual.pretty("HEADER",title_buffer)
-        visual.pretty("BOLD",buffer)
+        pretty("HEADER",title_buffer)
+        pretty("BOLD",buffer)
         action: list[(str,str)] = optionHandler(input())
         if action[0][0] == "NOP":
             print("Invalid Action")
         else:
             exec(action[1])
-            print()
 
 def optionHandler(option: str = None, get: bool=False) -> list[(str,str)]:
     options: list[(str,str)] = []
@@ -35,9 +40,6 @@ def optionHandler(option: str = None, get: bool=False) -> list[(str,str)]:
         return [("NOP","NOP")]
     return options[choice]
 
-def run_sim() -> None:
-    preprocessor.pre_process()
-
 def about() -> None:
     try:
         with open("about.txt",'r',encoding='utf-8') as f:
@@ -49,5 +51,6 @@ def about() -> None:
 
 if __name__ == "__main__":
     import preprocessor
-    import visual
+    from visual import pretty
+    import binary
     main()

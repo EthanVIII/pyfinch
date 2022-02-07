@@ -1,5 +1,5 @@
 # PYFINCH - Self Replicating and Evolving Programs. WIP!
-Pyfinch is an attempt to create self-replicating an evolving computer programs.
+Pyfinch is an attempt to create self-replicating and evolving computer programs.
 
 This is a beginner's learning project.
 
