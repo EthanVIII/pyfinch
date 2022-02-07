@@ -1,12 +1,24 @@
+from lexome import translate_to_str
+
+
 def main() -> None:
     runInterface()
 
 def run_sim() -> None:
-    orgs, lexome = list[list[str]],list[str]
-    orgs, lexome = preprocessor.pre_process()
-    lexome_dict: dict = binary.to_dict(lexome)
-    print(lexome_dict)
-    lexome_orgs: list[bytearray] = []
+    str_orgs, str_lexome = list[list[str]],list[str]
+    str_orgs, str_lexome = preprocessor.pre_process()
+
+    binary_dict: dict = lexome.to_dict(str_lexome)
+    str_dict: dict = dict(zip(binary_dict.values(),binary_dict.keys())) 
+
+    binary_orgs: list[bytearray] = []
+    for o in str_orgs:
+        binary_orgs.append(lexome.translate_to_binary(o,binary_dict))
+        print(binary_orgs[0])
+
+    for o in binary_orgs:
+        print(translate_to_str(o,str_dict))
+        
     quit()
 
 def runInterface() -> None:
@@ -52,5 +64,5 @@ def about() -> None:
 if __name__ == "__main__":
     import preprocessor
     from visual import pretty
-    import binary
+    import lexome
     main()
