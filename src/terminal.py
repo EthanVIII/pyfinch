@@ -30,7 +30,7 @@ def run_sim() -> None:
     print()
     pretty("SPRT", "Loading up aviary for finches")
     aviary.run_aviary(binary_orgs,org_pops, binary_lexome, binary_dict, str_dict, size)
-    
+
 
     # Testing
     for b in binary_orgs[0]:
