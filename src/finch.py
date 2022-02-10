@@ -1,5 +1,5 @@
 class Finch:
-    def __init__(self,lexome: bytearray):
+    def __init__(self,lexome: bytearray) -> None:
         self.lexome = lexome
         self.ax: bytearray = (0).to_bytes(4,'big')
         self.bx: bytearray = (0).to_bytes(4,'big')
@@ -15,3 +15,22 @@ class Finch:
 
     def mut(self, index: int, replacement: int):
         self.lexome[index] = replacement
+
+    def __str__(self) -> str:
+        buffer: list[str] = []
+        buffer.append("-----\n")
+        buffer.append("aX: ")
+        buffer.append(str(int.from_bytes(self.ax,'big')))
+        buffer.append(" bX: ")
+        buffer.append(str(int.from_bytes(self.bx,'big')))
+        buffer.append(" cX: ")
+        buffer.append(str(int.from_bytes(self.cx,'big')))
+        buffer.append("\n")
+        buffer.append("Stack 1: ")
+        buffer.append(str(self.s1))
+        buffer.append("\n")
+        buffer.append("Stack 2: ")
+        buffer.append(str(self.s2))
+        buffer.append("\n")
+        buffer.append("-----")
+        return "".join(buffer)

@@ -9,7 +9,7 @@ class col:
     BOLD = '\033[1m'
     UNDERLINE = '\033[4m'
 
-def pretty(type:str, text:str):
+def pretty(type:str, text:str) -> None:
     b = col
     match type:
         case "INFO":

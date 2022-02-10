@@ -1,6 +1,6 @@
 from finch import Finch
 from visual import pretty
-def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: bytearray, binary_dict: dict, str_dict: dict, size: int):
+def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: bytearray, binary_dict: dict, str_dict: dict, size: int) -> None:
     # binary_dict   Key:lexemes Val:binary
     # str_dict      Key:binary  Val:lexemes
 
@@ -9,7 +9,10 @@ def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: 
     for index, l in enumerate(binary_lexome):
         for i in range(org_pops[index]):
             finches.append(Finch(l))
-    
+            
+    for f in finches:
+        print(f)
+        
     pretty("INFO","Innoculated aviary with starter finches")
 
     for i in range(1000):
