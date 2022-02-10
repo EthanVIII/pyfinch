@@ -12,7 +12,7 @@ def run_sim() -> None:
     str_orgs,org_pops, str_lexome, size = preprocessor.pre_process()
 
     # Converts lexemes to binary
-    binary_dict: dict = lexome.to_dict(str_lexome)
+    binary_dict: dict = bytedict.to_dict(str_lexome)
     # Converts binary to lexemes
     str_dict: dict = dict(zip(binary_dict.values(),binary_dict.keys())) 
 
@@ -21,11 +21,11 @@ def run_sim() -> None:
 
     binary_orgs: list[bytearray] = []
     # Binary Lexome - will be used for mutation
-    binary_lexome: bytearray = lexome.translate_to_binary(str_lexome,binary_dict)
+    binary_lexome: bytearray = bytedict.translate_to_bytes(str_lexome,binary_dict)
 
     # Read string organisms and translate to binary.
     for o in str_orgs:
-        binary_orgs.append(lexome.translate_to_binary(o,binary_dict))
+        binary_orgs.append(bytedict.translate_to_bytes(o,binary_dict))
 
     print()
     pretty("SPRT", "Loading up aviary for finches")
@@ -82,7 +82,8 @@ def about() -> None:
 if __name__ == "__main__":
     import preprocessor
     from visual import pretty
-    import lexome
     import aviary
+    import lexome
+    import bytedict
     import os
     main()
