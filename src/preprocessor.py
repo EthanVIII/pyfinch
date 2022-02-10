@@ -60,7 +60,6 @@ def org_parser(ops: list[str]) -> list[str]:
     return org_intermediary
 
 # Parses lexome from file
-# We will see if lexome needs to be presented as bytes or not.
 def lexome_parser(ops: list[str]) -> list[str]:
     o_split: list[str] = []
     lexome_intermediary: list[str] = []
@@ -99,7 +98,6 @@ def finch_parser(name: str) -> tuple[list[str],str,int]:
                 pass
             case "LEXOME":
                 lexome_name = entry[1].strip()
-            #TODO Implement Size.
             case "SIZE":
                 size = int(entry[1].strip())
             case "ORG":
