@@ -28,7 +28,6 @@ def run_sim() -> None:
         binary_orgs.append(bytedict.translate_to_bytes(o,binary_dict))
 
     print()
-    pretty("SPRT", "Loading up aviary for finches")
     aviary.run_aviary(binary_orgs,org_pops, binary_lexome, binary_dict, str_dict, size)
 
     quit()
