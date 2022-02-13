@@ -1,10 +1,13 @@
 class Finch:
     def __init__(self,lexome: bytearray) -> None:
+        # Components - CPU, Memory, Output
         i32_BA: bytearray = bytearray((0).to_bytes(4,'big'))
         self.lexome = lexome
         self.ax: bytearray = i32_BA.copy()
         self.bx: bytearray = i32_BA.copy()
         self.cx: bytearray = i32_BA.copy()
+        self.stacks: list[list[bytearray]] = [[],[]]
+        self.active: int = 0
         self.s1: list[bytearray] = []
         self.s2: list[bytearray] = []
         self.read_h: int = 0
@@ -13,11 +16,27 @@ class Finch:
         self.inst_h: int = 0
         self.input: list[bytearray] = [i32_BA.copy() for i in range(3)]
         self.output: bytearray = i32_BA.copy()
-        del i32_BA
+        
+        # Attributes
+        self.age: int = 0
+        self.mod_inst_h = False
 
-    def mut(self, index: int, replacement: int):
+        # C
+        del i32_BA
+    
+    # Increments the instruction head for the next cycle.
+    def inc(self) -> None:
+        if not self.mod_inst_h:
+            if self.inst_h + 1 == len(self.lexome):
+                self.inst_h = 0
+            else:
+                self.inst_h += 1
+
+    # Mutates lexome with a particular replacement.
+    def mut(self, index: int, replacement: int) -> None:
         self.lexome[index] = replacement
 
+    # Print function.
     def __str__(self) -> str:
         buffer: list[str] = []
         buffer.append("-----\n")
@@ -29,10 +48,10 @@ class Finch:
         buffer.append(str(int.from_bytes(self.cx,'big')))
         buffer.append("\n")
         buffer.append("Stack 1: ")
-        buffer.append(str(self.s1))
+        buffer.append(str(self.stacks[0]))
         buffer.append("\n")
         buffer.append("Stack 2: ")
-        buffer.append(str(self.s2))
+        buffer.append(str(self.stacks[1]))
         buffer.append("\n")
         buffer.append("-----")
         return "".join(buffer)

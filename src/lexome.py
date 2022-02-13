@@ -1,10 +1,10 @@
-from preprocessor import finch_parser
-from visual import pretty
+
 from finch import Finch
 
 ### TESTING ###
-def run_op(op: bytes, str_dict: dict, finch: Finch):
-    exec(str(str_dict[op])+"(finch)")
+def run_op(str_dict: dict, finch: Finch) -> None:
+    op: int = finch.lexome[finch.inst_h]
+    exec(str(str_dict[op.to_bytes(1,'big')])+"(finch)")
 
 def h_alloc(finch: Finch):
     print("h_alloc")
@@ -32,7 +32,6 @@ def nop_B(finch: Finch):
 
 def mov_head(finch: Finch):
     print("mov_head")
-### TESTING
 
 
 

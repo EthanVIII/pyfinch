@@ -31,10 +31,6 @@ def run_sim() -> None:
     pretty("SPRT", "Loading up aviary for finches")
     aviary.run_aviary(binary_orgs,org_pops, binary_lexome, binary_dict, str_dict, size)
 
-
-    # Testing
-    for b in binary_orgs[0]:
-        lexome.run_op(b.to_bytes(1,'big'), str_dict, 0)
     quit()
 
 # Startup interface
