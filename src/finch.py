@@ -3,9 +3,7 @@ class Finch:
         # Components - CPU, Memory, Output
         i32_BA: bytearray = bytearray((0).to_bytes(4,'big'))
         self.lexome = lexome
-        self.ax: bytearray = i32_BA.copy()
-        self.bx: bytearray = i32_BA.copy()
-        self.cx: bytearray = i32_BA.copy()
+        self.register: list[bytearray] = [i32_BA.copy() for i in range(3)]
         self.stacks: list[list[bytearray]] = [[],[]]
         self.active: int = 0
         self.s1: list[bytearray] = []
@@ -19,7 +17,7 @@ class Finch:
         
         # Attributes
         self.age: int = 0
-        self.mod_inst_h = False
+        self.skip_next_op: bool = False
 
         # C
         del i32_BA
@@ -41,11 +39,11 @@ class Finch:
         buffer: list[str] = []
         buffer.append("-----\n")
         buffer.append("aX: ")
-        buffer.append(str(int.from_bytes(self.ax,'big')))
+        buffer.append(str(int.from_bytes(self.register[0],'big')))
         buffer.append(" bX: ")
-        buffer.append(str(int.from_bytes(self.bx,'big')))
+        buffer.append(str(int.from_bytes(self.register[1],'big')))
         buffer.append(" cX: ")
-        buffer.append(str(int.from_bytes(self.cx,'big')))
+        buffer.append(str(int.from_bytes(self.register[2],'big')))
         buffer.append("\n")
         buffer.append("Stack 1: ")
         buffer.append(str(self.stacks[0]))
