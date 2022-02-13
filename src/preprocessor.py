@@ -41,7 +41,7 @@ def pre_process() -> tuple[list[list[str]],list[str]]:
     return (orgs,org_pops,lexome,size)
 
 # Validates that organism org complies to the instruction set lexome_set
-def org_check(lexome_set: list[str],org: list[str]) -> (bool, str):
+def org_check(lexome_set: list[str],org: list[str]) -> tuple[bool,str]:
     for x in org:
         if x not in lexome_set:
             return (False, x)

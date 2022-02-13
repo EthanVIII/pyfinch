@@ -51,10 +51,8 @@ def to_dict(lexomes: list[str]) -> list[bytearray]:
         ret_dict[l] = inc_int.to_bytes(1,'big')
         inc_int += 1
     if len(lexomes) != len(lexome_clean):
-        
         pretty("WARNING", "Instruction set contains duplicate instructions")
     pretty("INFO","Validated lexome sets")
-
     pretty("INFO","Loaded binary dictionary")
     return ret_dict
 
