@@ -19,7 +19,7 @@ def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: 
                 finch.skip_next_op = False
             else:
                 run_op(str_dict,finch)
-        print("Pop: {}".format(str(len(finches))))
+        print("Pop: " + str(len(finches)))
     pretty("INFO","Completed Simulation")
 
 def replication_queue() -> None:
