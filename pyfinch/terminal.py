@@ -1,5 +1,12 @@
+from . import aviary
+from . import bytedict
+from . import preprocessor
+from .visual import pretty
+
+
 def main() -> None:
-    os.chdir("..")
+    # import os
+    # os.chdir("..")
     runInterface()
 
 
@@ -81,11 +88,4 @@ def about() -> None:
 
 
 if __name__ == "__main__":
-    import os
-
-    import aviary
-    import bytedict
-    import preprocessor
-    from visual import pretty
-
     main()

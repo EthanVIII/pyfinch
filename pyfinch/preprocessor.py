@@ -1,4 +1,4 @@
-from visual import pretty
+from .visual import pretty
 
 
 def pre_process() -> tuple[list[list[str]], list[str]]:

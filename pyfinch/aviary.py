@@ -1,5 +1,6 @@
-from finch import Finch
-from lexome import *
+from .finch import Finch
+
+from .lexome import *
 
 
 def run_aviary(

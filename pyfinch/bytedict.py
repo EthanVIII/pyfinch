@@ -1,4 +1,4 @@
-from visual import pretty
+from .visual import pretty
 
 
 # Generates byte dictionary per running instance.

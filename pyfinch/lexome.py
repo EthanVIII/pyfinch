@@ -1,7 +1,7 @@
 import copy
 
-from finch import Finch
-from visual import pretty
+from .finch import Finch
+from .visual import pretty
 
 
 def run_op(str_dict: dict, finch: Finch) -> str:
