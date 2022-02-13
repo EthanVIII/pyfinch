@@ -1,7 +1,6 @@
 from visual import pretty
 
 def pre_process() -> tuple[list[list[str]],list[str]]:
-    parsed = bool
     org_names: list[str] = []
     org_pops: list[int] = []
     lexome_name: str = ""
