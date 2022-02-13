@@ -23,6 +23,7 @@ class Finch:
         del i32_BA
     
     # Increments the instruction head for the next cycle.
+    # Lexome is a loop.
     def inc(self) -> None:
         if self.inst_h + 1 == len(self.lexome):
             self.inst_h = 0
