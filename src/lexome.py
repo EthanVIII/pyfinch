@@ -1,4 +1,3 @@
-from sympy import nonlinsolve
 from finch import Finch
 from visual import pretty
 
@@ -202,8 +201,20 @@ def get_head(finch: Finch, str_dict: dict) -> None:
             finch.register[2] = finch.writ_h.copy()
     finch.inc()
 
+def h_alloc(finch: Finch, str_dict: dict) -> None:
+    print("h_alloc - unimplemented")
 
+def h_divide(finch: Finch, str_dict: dict) -> None:
+    print("h_divide - unimplemented")
 
+def h_copy(finch: Finch, str_dict: dict) -> None:
+    print("h_copy - unimplemented")
 
+def h_search(finch: Finch, str_dict: dict) -> None:
+    print("h_search - unimplemented")
 
-    
+def if_label(finch: Finch, str_dict: dict) -> None:
+    print("if_label - unimplemented")
+
+def set_flow(finch: Finch, str_dict: dict) -> None:
+    print("set_flow - unimplemented")
