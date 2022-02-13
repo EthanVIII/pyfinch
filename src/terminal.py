@@ -79,7 +79,6 @@ if __name__ == "__main__":
     import preprocessor
     from visual import pretty
     import aviary
-    import lexome
     import bytedict
     import os
     main()

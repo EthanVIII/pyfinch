@@ -34,18 +34,19 @@ def pre_process() -> tuple[list[list[str]],list[str]]:
         temp_org: list[str] = org_parser(lines)
         if len(temp_org) == 0:
             pretty("WARNING","There is no lexome for this organism ({})".format(org_name))
-        if not org_check(lexome,temp_org):
-            pretty("PANIC","The lexome for this organism ({}) contains Ops that are not a part of the Lexome Set".format(org_name))
+        result, offending = org_check(lexome,temp_org)
+        if not result:
+            pretty("PANIC","The lexome for this organism ({}) contains Ops that are not a part of the Lexome Set ({})".format(org_name,offending))
         orgs.append(temp_org)
     pretty("INFO", "Parsed organism lexomes")
     return (orgs,org_pops,lexome,size)
 
 # Validates that organism org complies to the instruction set lexome_set
-def org_check(lexome_set: list[str],org: list[str]) -> bool:
+def org_check(lexome_set: list[str],org: list[str]) -> (bool, str):
     for x in org:
         if x not in lexome_set:
-            return False
-    return True
+            return (False, x)
+    return (True, None)
 
 # Parses organism from lexome file (list of strings)
 def org_parser(ops: list[str]) -> list[str]:

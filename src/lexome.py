@@ -1,9 +1,11 @@
 from finch import Finch
 from visual import pretty
+import copy
 
-def run_op(str_dict: dict, finch: Finch) -> None:
-    op: int = finch.lexome[finch.inst_h]
-    exec(str(str_dict[op.to_bytes(1,'big')])+"(finch,str_dict)")
+def run_op(str_dict: dict, finch: Finch) -> str:
+    op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
+    exec(op +"(finch,str_dict)")
+    return op
 
 def tinc(current: int, length: int, step=1) -> int:
     if current+step >= length:
@@ -65,7 +67,7 @@ def pop(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    element: int = 0
+    element: bytearray = bytearray((0).to_bytes(4,'big'))
     if finch.stacks[finch.active] != []:
         element = finch.stacks[finch.active][-1]
     finch.register[reg] = element
@@ -99,7 +101,7 @@ def shift_r(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.register[reg] = (int.from_bytes(finch.register[reg],'big') >> 1).to_bytes(4,'big')
+    finch.register[reg] = bytearray((int.from_bytes(finch.register[reg],'big') >> 1).to_bytes(4,'big'))
     finch.inc()
 
 def shift_l(finch: Finch, str_dict: dict) -> None:
@@ -107,7 +109,7 @@ def shift_l(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.register[reg] = (int.from_bytes(finch.register[reg],'big') << 1).to_bytes(4,'big')
+    finch.register[reg] = bytearray((int.from_bytes(finch.register[reg],'big') << 1).to_bytes(4,'big'))
     finch.inc()
 
 def inc(finch: Finch, str_dict: dict) -> None:
@@ -115,7 +117,7 @@ def inc(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.register[reg]  = (int.from_bytes(finch.register[reg],'big') + 1).to_bytes(4,'big')
+    finch.register[reg]  = bytearray((int.from_bytes(finch.register[reg],'big') + 1).to_bytes(4,'big'))
     finch.inc()
 
 def dec(finch: Finch, str_dict: dict) -> None:
@@ -123,7 +125,7 @@ def dec(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.register[reg]  = (int.from_bytes(finch.register[reg],'big') - 1).to_bytes(4,'big')
+    finch.register[reg]  = bytearray((int.from_bytes(finch.register[reg],'big') - 1).to_bytes(4,'big'))
     finch.inc()
 
 def add(finch: Finch, str_dict: dict) -> None:
@@ -131,7 +133,7 @@ def add(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.register[reg] = (int.from_bytes(finch.register[1],'big') + int.from_bytes(finch.register[2],'big')).to_bytes(4,'big')
+    finch.register[reg] = bytearray(int.from_bytes(finch.register[1],'big') + int.from_bytes(finch.register[2],'big'))
     finch.inc()
 
 def sub(finch: Finch, str_dict: dict) -> None:
@@ -139,7 +141,7 @@ def sub(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1 
-    finch.register[reg] = (int.from_bytes(finch.register[1],'big') - int.from_bytes(finch.register[2],'big')).to_bytes(4,'big')
+    finch.register[reg] = bytearray((int.from_bytes(finch.register[1],'big') - int.from_bytes(finch.register[2],'big')).to_bytes(4,'big'))
     finch.inc()
 
 def xor(finch: Finch, str_dict: dict) -> None:
@@ -147,7 +149,7 @@ def xor(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1 
-    finch.register[reg] = (int.from_bytes(finch.register[1],'big') ^ int.from_bytes(finch.register[2],'big')).to_bytes(4,'big')
+    finch.register[reg] = bytearray((int.from_bytes(finch.register[1],'big') ^ int.from_bytes(finch.register[2],'big')).to_bytes(4,'big'))
     finch.inc()
 
 def io(finch: Finch, str_dict: dict) -> None:
@@ -155,8 +157,8 @@ def io(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 1
-    finch.output = finch.register[reg].copy()
-    finch.register[reg] = finch.input[0].copy()
+    finch.output = copy.copy(finch.register[reg])
+    finch.register[reg] = copy.copy(finch.input[0])
     finch.inc()
 
 def mov_head(finch: Finch, str_dict: dict) -> None:
@@ -166,11 +168,11 @@ def mov_head(finch: Finch, str_dict: dict) -> None:
         head = 0
     match head:
         case 0:
-            finch.inst_h = finch.flow_h.copy()
+            finch.inst_h = copy.copy(finch.flow_h)
         case 1:
-            finch.read_h = finch.flow_h.copy()
+            finch.read_h = copy.copy(finch.flow_h)
         case 2:
-            finch.writ_h = finch.flow_h.copy()
+            finch.writ_h = copy.copy(finch.flow_h)
     finch.inc()
 
 def jmp_head(finch: Finch, str_dict: dict) -> None:
@@ -194,11 +196,11 @@ def get_head(finch: Finch, str_dict: dict) -> None:
         head = 0
     match head:
         case 0:
-            finch.register[2] = finch.inst_h.copy()
+            finch.register[2] = bytearray(finch.inst_h.to_bytes(4,'big'))
         case 1:
-            finch.register[2] = finch.read_h.copy()
+            finch.register[2] = bytearray(finch.read_h.to_bytes(4,'big'))
         case 2:
-            finch.register[2] = finch.writ_h.copy()
+            finch.register[2] = bytearray(finch.writ_h.to_bytes(4,'big'))
     finch.inc()
 
 def h_alloc(finch: Finch, str_dict: dict) -> None:

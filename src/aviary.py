@@ -14,12 +14,18 @@ def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: 
 
     pretty("INFO","Innoculated aviary with starter finches")
 
-    for i in range(10):
+    for i in range(1000):
         for finch in finches:
             if finch.skip_next_op:
                 finch.inc()
                 finch.skip_next_op = False
-            run_op(str_dict,finch)
+            else:
+                run_op(str_dict,finch)
+
+def ind_typecheck(var, expected_type) -> bool:
+    if type(ind_typecheck) == expected_type:
+        return True
+    return False
 
 def replication_queue() -> None:
     pass

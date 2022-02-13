@@ -1,7 +1,7 @@
 from visual import pretty
 
 # Generates byte dictionary per running instance.
-def to_dict(lexomes: list[str]) -> list[bytearray]:
+def to_dict(lexomes: list[str]) -> dict:
     inc_int: int = 0
     master_lexome: list[str] = []
     lexome_clean: list[str] = list(set(lexomes))
@@ -11,6 +11,7 @@ def to_dict(lexomes: list[str]) -> list[bytearray]:
     except:
         pretty("PANIC","master_lexome.cfg was not found in the config subfolder. Unable to parse master instruction set.")
     lines: list[str] = f.readlines()
+    f.close()
     for l in lines:
         first_str: str = l.split("#")[0].strip()
         if first_str != "":
@@ -38,6 +39,7 @@ def to_dict(lexomes: list[str]) -> list[bytearray]:
     except:
         pretty("PANIC","master_lexome.cfg was not found in the config subfolder. Unable to parse master instruction set.")
     lines: list[str] = f.readlines()
+    f.close()
     for l in lines:
         first_str: str = l.split("#")[0].strip()
         if first_str != "":
