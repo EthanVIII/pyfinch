@@ -24,11 +24,10 @@ class Finch:
     
     # Increments the instruction head for the next cycle.
     def inc(self) -> None:
-        if not self.mod_inst_h:
-            if self.inst_h + 1 == len(self.lexome):
-                self.inst_h = 0
-            else:
-                self.inst_h += 1
+        if self.inst_h + 1 == len(self.lexome):
+            self.inst_h = 0
+        else:
+            self.inst_h += 1
 
     # Mutates lexome with a particular replacement.
     def mut(self, index: int, replacement: int) -> None:
