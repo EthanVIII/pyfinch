@@ -1,5 +1,4 @@
 from finch import Finch
-from visual import pretty
 from lexome import *
 
 def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: bytearray, binary_dict: dict, str_dict: dict, size: int) -> None:
@@ -19,7 +18,7 @@ def run_aviary(binary_lexome: list[bytearray], org_pops: list[int],binary_inst: 
                 finch.skip_next_op = False
             else:
                 run_op(str_dict,finch)
-        print("Pop: " + str(len(finches)))
+        print("Pop: {}".format(str(len(finches))))
     pretty("INFO","Completed Simulation")
 
 def replication_queue() -> None:
