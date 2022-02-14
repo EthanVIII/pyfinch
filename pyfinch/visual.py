@@ -12,26 +12,21 @@ class col:
 
 def pretty(type: str, text: str) -> None:
     b = col
-    match type:
-        case "INFO":
-            print(col.OKGREEN + "[INFO] " + col.ENDC + text)
-        case "HEADER":
-            print(col.OKGREEN + text + col.ENDC)
-        case "WARNING":
-            print(col.WARNING + "[WARNING] " + col.ENDC + text)
-        case "PANIC":
-            print(col.FAIL + "[PANIC] " + text + col.ENDC)
-            quit()
-        case "BOLD":
-            print(col.BOLD + text + col.BOLD)
-        case "SPRT":
-            print(col.OKBLUE + "----- " + text + " -----" + col.ENDC)
-        case _:
-            print(
-                col.WARNING
-                + "[WARNING] "
-                + col.ENDC
-                + "No pretty format for: "
-                + text[0:3]
-                + "..."
-            )
+
+    if type == "INFO":
+        print(f'{col.OKGREEN}[INFO]{col.ENDC} {text}')
+    elif type == "HEADER":
+        print(f'{col.OKGREEN}{text}{col.ENDC}')
+    elif type == "WARNING":
+        print(f'{col.WARNING}[WARNING]{col.ENDC} {text}')
+    elif type == "PANIC":
+        print(f'{col.FAIL}[PANIC] {text}{col.ENDC}')
+        quit()
+    elif type == "BOLD":
+        print(f'{col.BOLD}{text}{col.BOLD}')
+    elif type == "SPRT":
+        print(f'{col.OKBLUE}----- {text} -----{col.ENDC}')
+    else:
+        print(
+            f'{col.WARNING}[WARNING]{col.ENDC} No pretty format for: {text[:3]} ..."'
+        )

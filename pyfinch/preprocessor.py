@@ -117,25 +117,27 @@ def finch_parser(name: str) -> tuple[list[str], str, int]:
                 "PANIC",
                 "Finch Config was formatted incorrectly. Blank fields were found.",
             )
-        match (entry[0]):
-            case "\n":
-                pass
-            case "#":
-                pass
-            case "LEXOME":
-                lexome_name = entry[1].strip()
-            case "SIZE":
-                size = int(entry[1].strip())
-            case "ORG":
-                org_names = list(map(str.strip, entry[1::2]))
-                org_pops = list(map(int, list(map(str.strip, entry[2::2]))))
-            case _:
-                pretty(
-                    "PANIC",
-                    "Finch Config contains unknown command in line {} and command {}".format(
-                        row, entry[0]
-                    ),
-                )
+
+        en0 = entry[0]
+        if en0 == "\n":
+            pass
+        elif en0 == "#":
+            pass
+        elif en0 == "LEXOME":
+            lexome_name = entry[1].strip()
+        elif en0 == "SIZE":
+            size = int(entry[1].strip())
+        elif en0 == "ORG":
+            org_names = list(map(str.strip, entry[1::2]))
+            org_pops = list(map(int, list(map(str.strip, entry[2::2]))))
+        else:
+            pretty(
+                "PANIC",
+                "Finch Config contains unknown command in line {} and command {}".format(
+                    row, entry[0]
+                ),
+            )
+
     if size == -1:
         pretty("PANIC", "Finch Config did not specify a valid aviary size.")
     return (org_names, org_pops, lexome_name, size)

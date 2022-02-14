@@ -32,15 +32,14 @@ def next_nop(finch: Finch, str_dict: dict) -> int:
     next_str: str = str_dict[
         finch.lexome[tinc(finch.inst_h, len(finch.lexome))].to_bytes(1, "big")
     ]
-    match next_str:
-        case "nop_A":
-            return 0
-        case "nop_B":
-            return 1
-        case "nop_C":
-            return 2
-        case _:
-            return 3
+    if next_str == "nop_A":
+        return 0
+    elif next_str == "nop_B":
+        return 1
+    elif next_str == "nop_C":
+        return 2
+    else:
+        return 3
 
 
 # Instruction No-Ops
@@ -220,13 +219,16 @@ def mov_head(finch: Finch, str_dict: dict) -> None:
     head: int = next_nop(finch, str_dict)
     if head == 3:
         head = 0
-    match head:
-        case 0:
-            finch.inst_h = copy.copy(finch.flow_h)
-        case 1:
-            finch.read_h = copy.copy(finch.flow_h)
-        case 2:
-            finch.writ_h = copy.copy(finch.flow_h)
+
+    if head == 0:
+        finch.inst_h = copy.copy(finch.flow_h)
+    elif head == 1:
+        finch.read_h = copy.copy(finch.flow_h)
+    elif head == 2:
+        finch.writ_h = copy.copy(finch.flow_h)
+
+    # XXX: What if head > 2?
+
     finch.inc()
 
 
@@ -235,13 +237,16 @@ def jmp_head(finch: Finch, str_dict: dict) -> None:
     head: int = next_nop(finch, str_dict)
     if head == 3:
         head = 0
-    match head:
-        case 0:
-            finch.inst_h = tinc(finch.inst_h, len(finch.lexome), finch.register[2])
-        case 1:
-            finch.read_h = tinc(finch.read_h, len(finch.lexome), finch.register[2])
-        case 2:
-            finch.writ_h = tinc(finch.read_h, len(finch.lexome), finch.register[2])
+
+    if head == 0:
+        finch.inst_h = tinc(finch.inst_h, len(finch.lexome), finch.register[2])
+    elif head == 1:
+        finch.read_h = tinc(finch.read_h, len(finch.lexome), finch.register[2])
+    elif head == 2:
+        finch.writ_h = tinc(finch.read_h, len(finch.lexome), finch.register[2])
+
+    # XXX: What if head > 2?
+
     finch.inc()
 
 
@@ -250,13 +255,16 @@ def get_head(finch: Finch, str_dict: dict) -> None:
     head: int = next_nop(finch, str_dict)
     if head == 3:
         head = 0
-    match head:
-        case 0:
-            finch.register[2] = bytearray(finch.inst_h.to_bytes(4, "big"))
-        case 1:
-            finch.register[2] = bytearray(finch.read_h.to_bytes(4, "big"))
-        case 2:
-            finch.register[2] = bytearray(finch.writ_h.to_bytes(4, "big"))
+
+    if head == 0:
+        finch.register[2] = bytearray(finch.inst_h.to_bytes(4, "big"))
+    elif head == 1:
+        finch.register[2] = bytearray(finch.read_h.to_bytes(4, "big"))
+    elif head == 2:
+        finch.register[2] = bytearray(finch.writ_h.to_bytes(4, "big"))
+
+    # XXX: What if head > 2?
+
     finch.inc()
 
 

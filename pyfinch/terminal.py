@@ -1,6 +1,4 @@
-from . import aviary
-from . import bytedict
-from . import preprocessor
+from . import aviary, bytedict, preprocessor
 from .visual import pretty
 
 
