@@ -1,12 +1,12 @@
 from .visual import pretty
 
 
-def pre_process() -> tuple[list[list[str]], list[str]]:
+def pre_process() -> tuple[list[list[str]], list[int], list[str], int]:
     org_names: list[str] = []
     org_pops: list[int] = []
     lexome_name: str = ""
-    orgs, lexome = list[list[str]], list[str]
-    orgs, lexome = [], []
+    orgs: list[list[str]] = []
+    lexome: list[str] = []
     size: int = 0
 
     # Parses Config File Once and all at once.
@@ -34,7 +34,7 @@ def pre_process() -> tuple[list[list[str]], list[str]]:
                     org_name
                 ),
             )
-        lines: list[str] = f.readlines()
+        lines = f.readlines()
         f.close()
         temp_org: list[str] = org_parser(lines)
         if len(temp_org) == 0:
@@ -55,7 +55,7 @@ def pre_process() -> tuple[list[list[str]], list[str]]:
 
 
 # Validates that organism org complies to the instruction set lexome_set
-def org_check(lexome_set: list[str], org: list[str]) -> tuple[bool, str]:
+def org_check(lexome_set: list[str], org: list[str]) -> tuple[bool, str | None]:
     for x in org:
         if x not in lexome_set:
             return (False, x)
@@ -100,7 +100,7 @@ def lexome_parser(ops: list[str]) -> list[str]:
 
 
 # Parses and checks config file. File has to be in a subfolder config\default.cfg.
-def finch_parser(name: str) -> tuple[list[str], str, int]:
+def finch_parser(name: str) -> tuple[list[str], list[int], str, int]:
     try:
         with open("config\{}.cfg".format(name), "r", encoding="utf-8") as f:
             lines: list[str] = f.readlines()

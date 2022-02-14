@@ -1,6 +1,12 @@
 from . import aviary, bytedict, preprocessor
 from .visual import pretty
 
+OPTIONS = [
+    (0, "Run Simulation - Run a preset simulation", "run_sim()"),
+    (1, "About - Information about PYFINCH", "about()"),
+    (2, "Quit - Quit PYFINCH", "quit()"),
+]
+
 
 def main() -> None:
     # import os
@@ -44,33 +50,35 @@ def runInterface() -> None:
     title_buffer: str = "-" * 23 + "\n"
     title_buffer += "PYFINCH - ALPHA BUILD\n"
     title_buffer += "-" * 23
-    for i, (option, _) in enumerate(optionHandler(get=True)):
-        buffer += "[" + str(i) + "]: " + option + "\n"
+
+    # Alternatively, using `list comprehension`
+    #   buffer = '\n'.join(
+    #                   f"[{i}] {option}" for (i, option, _) in OPTIONS
+    #                   )
+    for i, option, _ in OPTIONS:
+        buffer += f"[{i}] {option}\n"
+
     while True:
         pretty("HEADER", title_buffer)
         pretty("BOLD", buffer)
-        action: list[(str, str)] = optionHandler(input())
-        if action[0][0] == "NOP":
+        i, option, code = optionHandler(input())
+        if i == -1:
             print("Invalid Action")
         else:
-            exec(action[1])
+            exec(code)
 
 
 # Handles the display menus - easily updateable.
-def optionHandler(option: str = None, get: bool = False) -> list[(str, str)]:
-    options: list[(str, str)] = []
-    options.append(("Run Simulation - Run a preset simulation", "run_sim()"))
-    options.append(("About - Information about PYFINCH", "about()"))
-    options.append(("Quit - Quit PYFINCH", "quit()"))
-    if get:
-        return options
+def optionHandler(option: str = None) -> tuple[int, str, str]:
     try:
-        choice: int = int(option)
+        choice: int = int(option)  # type: ignore
     except:
-        return [("NOP", "NOP")]
-    if choice >= len(options) or choice < 0:
-        return [("NOP", "NOP")]
-    return options[choice]
+        return -1, "NOP", "pass"
+
+    if choice >= len(OPTIONS) or choice < 0:
+        return -1, "NOP", "pass"
+
+    return OPTIONS[choice]
 
 
 # Option to display About.
