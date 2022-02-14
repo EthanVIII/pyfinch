@@ -1,23 +1,23 @@
 class Finch:
     def __init__(self, lexome: bytearray) -> None:
         # Components - CPU, Memory, Output
-        i32_BA: bytearray = bytearray((0).to_bytes(4, "big"))
+        i32_BA = bytearray((0).to_bytes(4, "big"))
         self.lexome = lexome
-        self.register: list[bytearray] = [i32_BA.copy() for i in range(3)]
+        self.register = [i32_BA.copy() for i in range(3)]
         self.stacks: list[list[bytearray]] = [[], []]
-        self.active: int = 0
+        self.active = 0
         self.s1: list[bytearray] = []
         self.s2: list[bytearray] = []
-        self.read_h: int = 0
-        self.writ_h: int = 0
-        self.flow_h: int = 0
-        self.inst_h: int = 0
-        self.input: list[bytearray] = [i32_BA.copy() for i in range(3)]
-        self.output: bytearray = i32_BA.copy()
+        self.read_h = 0
+        self.writ_h = 0
+        self.flow_h = 0
+        self.inst_h = 0
+        self.input = [i32_BA.copy() for i in range(3)]
+        self.output = i32_BA.copy()
 
         # Attributes
-        self.age: int = 0
-        self.skip_next_op: bool = False
+        self.age = 0
+        self.skip_next_op = False
 
         # C
         del i32_BA
@@ -36,7 +36,7 @@ class Finch:
 
     # Print function.
     def __str__(self) -> str:
-        buffer: list[str] = []
+        buffer = []
         buffer.append("-----\n")
         buffer.append("aX: ")
         buffer.append(str(int.from_bytes(self.register[0], "big")))

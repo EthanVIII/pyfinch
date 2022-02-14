@@ -1,5 +1,7 @@
+from .const import StrDict
 from .finch import Finch
-from .lexome import *
+from .lexome import run_op
+from .visual import pretty
 
 
 def run_aviary(
@@ -7,16 +9,17 @@ def run_aviary(
     org_pops: list[int],
     binary_inst: bytearray,
     binary_dict: dict,
-    str_dict: dict,
+    str_dict: StrDict,
     size: int,
 ) -> None:
     # binary_dict   Key:lexemes Val:binary
     # str_dict      Key:binary  Val:lexemes
-    finches: list[Finch] = []
+    finches = []
     # Load finches
     for index, l in enumerate(binary_lexome):
         for i in range(org_pops[index]):
             finches.append(Finch(l))
+
     pretty("INFO", "Innoculated with starting Pop")
     pretty("INFO", "Running Simulation...")
     for i in range(10):

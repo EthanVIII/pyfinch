@@ -1,4 +1,5 @@
 from . import aviary, bytedict, preprocessor
+from .const import StrDict
 from .visual import pretty
 
 OPTIONS = [
@@ -17,22 +18,18 @@ def main() -> None:
 # Option to run the simulation
 def run_sim() -> None:
     pretty("SPRT", "Starting Pre-Processing & Parsing (IO)")
-    str_orgs: list[list[str]] = [[]]
-    str_lexome: list[str] = []
-    size: int = 0
-    org_pops: list[int] = []
     str_orgs, org_pops, str_lexome, size = preprocessor.pre_process()
 
     # Converts lexemes to binary
-    binary_dict: dict = bytedict.to_dict(str_lexome)
+    binary_dict = bytedict.to_dict(str_lexome)
     # Converts binary to lexemes
-    str_dict: dict = dict(zip(binary_dict.values(), binary_dict.keys()))
+    str_dict = StrDict(dict(zip(binary_dict.values(), binary_dict.keys())))
 
     pretty("SPRT", "Completed Pre-Processing & Parsing (IO)")
 
-    binary_orgs: list[bytearray] = []
+    binary_orgs = []
     # Binary Lexome - will be used for mutation
-    binary_lexome: bytearray = bytedict.translate_to_bytes(str_lexome, binary_dict)
+    binary_lexome = bytedict.translate_to_bytes(str_lexome, binary_dict)
 
     # Read string organisms and translate to binary.
     for o in str_orgs:
@@ -46,8 +43,7 @@ def run_sim() -> None:
 
 # Startup interface
 def runInterface() -> None:
-    buffer: str = ""
-    title_buffer: str = "-" * 23 + "\n"
+    title_buffer = "-" * 23 + "\n"
     title_buffer += "PYFINCH - ALPHA BUILD\n"
     title_buffer += "-" * 23
 
@@ -55,6 +51,7 @@ def runInterface() -> None:
     #   buffer = '\n'.join(
     #                   f"[{i}] {option}" for (i, option, _) in OPTIONS
     #                   )
+    buffer = ""
     for i, option, _ in OPTIONS:
         buffer += f"[{i}] {option}\n"
 
@@ -71,7 +68,7 @@ def runInterface() -> None:
 # Handles the display menus - easily updateable.
 def optionHandler(option: str = None) -> tuple[int, str, str]:
     try:
-        choice: int = int(option)  # type: ignore
+        choice = int(option)  # type: ignore
     except:
         return -1, "NOP", "pass"
 

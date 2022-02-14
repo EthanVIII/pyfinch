@@ -1,12 +1,14 @@
 import copy
+import typing as T
 
+from .const import StrDict
 from .finch import Finch
 from .visual import pretty
 
 
-def run_op(str_dict: dict, finch: Finch) -> str:
-    op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1, "big")]
-    exec(op + "(finch,str_dict)")
+def run_op(str_dict: StrDict, finch: Finch) -> str:
+    op = str_dict[finch.lexome[finch.inst_h].to_bytes(1, "big")]
+    exec(f"{op}(finch,str_dict)")
     return op
 
 
@@ -28,8 +30,8 @@ def comp(register: int) -> int:
     return register + 1
 
 
-def next_nop(finch: Finch, str_dict: dict) -> int:
-    next_str: str = str_dict[
+def next_nop(finch: Finch, str_dict: StrDict) -> int:
+    next_str = str_dict[
         finch.lexome[tinc(finch.inst_h, len(finch.lexome))].to_bytes(1, "big")
     ]
     if next_str == "nop_A":
@@ -43,21 +45,21 @@ def next_nop(finch: Finch, str_dict: dict) -> int:
 
 
 # Instruction No-Ops
-def nop_B(finch: Finch, str_dict: dict) -> None:
+def nop_B(finch: Finch, str_dict: StrDict) -> None:
     finch.inc()
 
 
-def nop_A(finch: Finch, str_dict: dict) -> None:
+def nop_A(finch: Finch, str_dict: StrDict) -> None:
     finch.inc()
 
 
-def nop_C(finch: Finch, str_dict: dict) -> None:
+def nop_C(finch: Finch, str_dict: StrDict) -> None:
     finch.inc()
 
 
-def if_n_equ(finch: Finch, str_dict: dict) -> None:
+def if_n_equ(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     if finch.register[reg] == finch.register[comp(reg)]:
@@ -67,9 +69,9 @@ def if_n_equ(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def if_less(finch: Finch, str_dict: dict) -> None:
+def if_less(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     if finch.register[reg] >= finch.register[comp(reg)]:
@@ -79,28 +81,28 @@ def if_less(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def pop(finch: Finch, str_dict: dict) -> None:
+def pop(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
-    element: bytearray = bytearray((0).to_bytes(4, "big"))
+    element = bytearray((0).to_bytes(4, "big"))
     if finch.stacks[finch.active] != []:
         element = finch.stacks[finch.active][-1]
     finch.register[reg] = element
     finch.inc()
 
 
-def push(finch: Finch, str_dict: dict) -> None:
+def push(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.stacks[finch.active].append(finch.register[reg])
     finch.inc()
 
 
-def swap_stk(finch: Finch, str_dict: dict) -> None:
+def swap_stk(finch: Finch, str_dict: StrDict) -> None:
     if finch.active == 0:
         finch.active = 1
     else:
@@ -108,9 +110,9 @@ def swap_stk(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def swap(finch: Finch, str_dict: dict) -> None:
+def swap(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg], finch.register[comp(reg)] = (
@@ -120,9 +122,9 @@ def swap(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def shift_r(finch: Finch, str_dict: dict) -> None:
+def shift_r(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -131,9 +133,9 @@ def shift_r(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def shift_l(finch: Finch, str_dict: dict) -> None:
+def shift_l(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -142,9 +144,9 @@ def shift_l(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def inc(finch: Finch, str_dict: dict) -> None:
+def inc(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -153,9 +155,9 @@ def inc(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def dec(finch: Finch, str_dict: dict) -> None:
+def dec(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -164,9 +166,9 @@ def dec(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def add(finch: Finch, str_dict: dict) -> None:
+def add(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -176,9 +178,9 @@ def add(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def sub(finch: Finch, str_dict: dict) -> None:
+def sub(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -190,9 +192,9 @@ def sub(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def xor(finch: Finch, str_dict: dict) -> None:
+def xor(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.register[reg] = bytearray(
@@ -204,9 +206,9 @@ def xor(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def io(finch: Finch, str_dict: dict) -> None:
+def io(finch: Finch, str_dict: StrDict) -> None:
     # ?BX?
-    reg: int = next_nop(finch, str_dict)
+    reg = next_nop(finch, str_dict)
     if reg == 3:
         reg = 1
     finch.output = copy.copy(finch.register[reg])
@@ -214,9 +216,9 @@ def io(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def mov_head(finch: Finch, str_dict: dict) -> None:
+def mov_head(finch: Finch, str_dict: StrDict) -> None:
     # ?IP?
-    head: int = next_nop(finch, str_dict)
+    head = next_nop(finch, str_dict)
     if head == 3:
         head = 0
 
@@ -232,9 +234,9 @@ def mov_head(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def jmp_head(finch: Finch, str_dict: dict) -> None:
+def jmp_head(finch: Finch, str_dict: StrDict) -> None:
     # ?IP?
-    head: int = next_nop(finch, str_dict)
+    head = next_nop(finch, str_dict)
     if head == 3:
         head = 0
 
@@ -250,7 +252,7 @@ def jmp_head(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def get_head(finch: Finch, str_dict: dict) -> None:
+def get_head(finch: Finch, str_dict: StrDict) -> None:
     # ?IP?
     head: int = next_nop(finch, str_dict)
     if head == 3:
@@ -268,25 +270,25 @@ def get_head(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 
-def h_alloc(finch: Finch, str_dict: dict) -> None:
+def h_alloc(finch: Finch, str_dict: StrDict) -> None:
     print("h_alloc - unimplemented")
 
 
-def h_divide(finch: Finch, str_dict: dict) -> None:
+def h_divide(finch: Finch, str_dict: StrDict) -> None:
     print("h_divide - unimplemented")
 
 
-def h_copy(finch: Finch, str_dict: dict) -> None:
+def h_copy(finch: Finch, str_dict: StrDict) -> None:
     print("h_copy - unimplemented")
 
 
-def h_search(finch: Finch, str_dict: dict) -> None:
+def h_search(finch: Finch, str_dict: StrDict) -> None:
     print("h_search - unimplemented")
 
 
-def if_label(finch: Finch, str_dict: dict) -> None:
+def if_label(finch: Finch, str_dict: StrDict) -> None:
     print("if_label - unimplemented")
 
 
-def set_flow(finch: Finch, str_dict: dict) -> None:
+def set_flow(finch: Finch, str_dict: StrDict) -> None:
     print("set_flow - unimplemented")

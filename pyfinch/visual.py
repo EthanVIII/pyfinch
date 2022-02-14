@@ -27,4 +27,4 @@ def pretty(type: str, text: str) -> None:
     elif type == "SPRT":
         print(f"{col.OKBLUE}----- {text} -----{col.ENDC}")
     else:
-        print(f'{col.WARNING}[WARNING]{col.ENDC} No pretty format for: {text[:3]} ..."')
+        print(f"{col.WARNING}[WARNING]{col.ENDC} No pretty format for: {text[:3]} ...")

@@ -2,12 +2,8 @@ from .visual import pretty
 
 
 def pre_process() -> tuple[list[list[str]], list[int], list[str], int]:
-    org_names: list[str] = []
-    org_pops: list[int] = []
-    lexome_name: str = ""
-    orgs: list[list[str]] = []
-    lexome: list[str] = []
-    size: int = 0
+    lexome_name = ""
+    orgs = []
 
     # Parses Config File Once and all at once.
     org_names, org_pops, lexome_name, size = finch_parser("default")
@@ -18,7 +14,7 @@ def pre_process() -> tuple[list[list[str]], list[int], list[str], int]:
         f = open("lexome\{}.cfg".format(lexome_name), "r", encoding="utf-8")
     except:
         pretty("PANIC", "{}.cfg was not found in lexome folder".format(lexome_name))
-    lines: list[str] = f.readlines()
+    lines = f.readlines()
     f.close()
     lexome = lexome_parser(lines)
     pretty("INFO", "Parsed lexome sets")
@@ -36,7 +32,7 @@ def pre_process() -> tuple[list[list[str]], list[int], list[str], int]:
             )
         lines = f.readlines()
         f.close()
-        temp_org: list[str] = org_parser(lines)
+        temp_org = org_parser(lines)
         if len(temp_org) == 0:
             pretty(
                 "WARNING", "There is no lexome for this organism ({})".format(org_name)
@@ -64,11 +60,10 @@ def org_check(lexome_set: list[str], org: list[str]) -> tuple[bool, str | None]:
 
 # Parses organism from lexome file (list of strings)
 def org_parser(ops: list[str]) -> list[str]:
-    o_split: list[str] = []
     org_intermediary: list[str] = []
     for o in ops:
         o_split = o.split("#")
-        first_str: str = o_split[0].strip()
+        first_str = o_split[0].strip()
         if first_str == "":
             continue
         org_intermediary.append(first_str)
@@ -83,7 +78,7 @@ def lexome_parser(ops: list[str]) -> list[str]:
         o_split += o.split(" ")
     o_split = list(map(str.strip, filter(lambda x: x != "\n", o_split)))
     for index, o in enumerate(o_split):
-        is_last: bool = (index + 1) == len(o_split)
+        is_last = (index + 1) == len(o_split)
         if o == "INST":
             if is_last:
                 pretty(
@@ -103,15 +98,15 @@ def lexome_parser(ops: list[str]) -> list[str]:
 def finch_parser(name: str) -> tuple[list[str], list[int], str, int]:
     try:
         with open("config\{}.cfg".format(name), "r", encoding="utf-8") as f:
-            lines: list[str] = f.readlines()
+            lines = f.readlines()
     except:
         pretty("PANIC", "Finch config was not found in config subfolder.")
-    org_names: list[str] = []
-    lexome_name: str = ""
+    org_names = []
+    lexome_name = ""
     org_pops: list[int] = []
-    size: int = -1
+    size = -1
     for row, line in enumerate(lines):
-        entry: list[str] = line.split(" ")
+        entry = line.split(" ")
         if len(entry) == 1 and entry[0] != "\n":
             pretty(
                 "PANIC",
