@@ -43,15 +43,15 @@ def runInterface() -> None:
     while True:
         pretty("HEADER",title_buffer)
         pretty("BOLD",buffer)
-        action: list[(str,str)] = optionHandler(input())
+        action: list[tuple[str,str]] = optionHandler(input())
         if action[0][0] == "NOP":
             print("Invalid Action")
         else:
-            exec(action[1])
+            exec(action[0][1])
 
 # Handles the display menus - easily updateable.
-def optionHandler(option: str = None, get: bool=False) -> list[(str,str)]:
-    options: list[(str,str)] = []
+def optionHandler(option: str = "", get: bool=False) -> list[tuple[str,str]]:
+    options: list[tuple[str,str]] = []
     options.append(("Run Simulation - Run a preset simulation","run_sim()"))
     options.append(("About - Information about PYFINCH","about()"))
     options.append(("Quit - Quit PYFINCH","quit()"))
@@ -63,7 +63,7 @@ def optionHandler(option: str = None, get: bool=False) -> list[(str,str)]:
         return [("NOP","NOP")]
     if choice >= len(options) or choice < 0:
         return [("NOP","NOP")]
-    return options[choice]
+    return [options[choice]]
 
 # Option to display About.
 def about() -> None:

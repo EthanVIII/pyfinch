@@ -1,15 +1,15 @@
 from visual import pretty
 
-def pre_process() -> tuple[list[list[str]],list[str]]:
+def pre_process() -> tuple[list[list[str]],list[int],list[str],int]:
     org_names: list[str] = []
     org_pops: list[int] = []
     lexome_name: str = ""
-    orgs, lexome = list[list[str]],list[str]
-    orgs, lexome = [], []
+    orgs: list[list[str]] = []
+    lexome: list[str] = []
     size: int = 0
 
     # Parses Config File Once and all at once.
-    org_names, org_pops,lexome_name, size = finch_parser("default")
+    org_names, org_pops, lexome_name, size = finch_parser("default")
     pretty("INFO","Parsed PYFINCH config")
     
     # Parses Lexome Set
@@ -17,9 +17,9 @@ def pre_process() -> tuple[list[list[str]],list[str]]:
         f = open("lexome\{}.cfg".format(lexome_name),'r',encoding="utf-8") 
     except:
         pretty("PANIC","{}.cfg was not found in lexome folder".format(lexome_name))
-    lines: list[str] = f.readlines()
+    lines_lexome: list[str] = f.readlines()
     f.close()
-    lexome = lexome_parser(lines)
+    lexome = lexome_parser(lines_lexome)
     pretty("INFO","Parsed lexome sets")
 
     # Parses Organism - Checks lexome for errors.
@@ -28,9 +28,9 @@ def pre_process() -> tuple[list[list[str]],list[str]]:
             f = open("org\{}.lxm".format(org_name),'r',encoding="utf-8")
         except:
             pretty("PANIC", "Specified organism lexome ({}.lxm) was not found in org folder".format(org_name))
-        lines: list[str] = f.readlines()
+        lines_org: list[str] = f.readlines()
         f.close()
-        temp_org: list[str] = org_parser(lines)
+        temp_org: list[str] = org_parser(lines_org)
         if len(temp_org) == 0:
             pretty("WARNING","There is no lexome for this organism ({})".format(org_name))
         result, offending = org_check(lexome,temp_org)
@@ -45,7 +45,7 @@ def org_check(lexome_set: list[str],org: list[str]) -> tuple[bool, str]:
     for x in org:
         if x not in lexome_set:
             return (False, x)
-    return (True, None)
+    return (True, "")
 
 # Parses organism from lexome file (list of strings)
 def org_parser(ops: list[str]) -> list[str]:
@@ -77,7 +77,7 @@ def lexome_parser(ops: list[str]) -> list[str]:
     return lexome_intermediary
 
 # Parses and checks config file. File has to be in a subfolder config\default.cfg.
-def finch_parser(name: str) -> tuple[list[str],str,int]:
+def finch_parser(name: str) -> tuple[list[str],list[int],str,int]:
     try:
         with open("config\{}.cfg".format(name),'r',encoding='utf-8') as f:
             lines: list[str] = f.readlines()
@@ -91,20 +91,15 @@ def finch_parser(name: str) -> tuple[list[str],str,int]:
         entry: list[str] = line.split(" ")
         if len(entry) == 1 and entry[0] != '\n':
             pretty("PANIC", "Finch Config was formatted incorrectly. Blank fields were found.")
-        match (entry[0]):
-            case "\n":
-                pass
-            case "#":
-                pass
-            case "LEXOME":
-                lexome_name = entry[1].strip()
-            case "SIZE":
-                size = int(entry[1].strip())
-            case "ORG":
-                org_names = list(map(str.strip,entry[1::2]))
-                org_pops  = list(map(int,list(map(str.strip,entry[2::2]))))
-            case _:
-                pretty("PANIC","Finch Config contains unknown command in line {} and command {}".format(row,entry[0]))
+        if entry[0] == "LEXOME":
+            lexome_name = entry[1].strip()
+        elif entry[0] == "SIZE":
+            size = int(entry[1].strip())
+        elif entry[0] == "ORG":
+            org_names = list(map(str.strip,entry[1::2]))
+            org_pops  = list(map(int,list(map(str.strip,entry[2::2]))))
+        elif entry[0] != "\n" and entry[0] != "#":
+            pretty("PANIC","Finch Config contains unknown command in line {} and command {}".format(row,entry[0]))
     if size == -1:
         pretty("PANIC", "Finch Config did not specify a valid aviary size.")
     return (org_names,org_pops,lexome_name,size)
