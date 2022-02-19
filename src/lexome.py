@@ -201,6 +201,7 @@ def get_head(finch: Finch, str_dict: dict) -> None:
     finch.inc()
     
 def h_alloc(finch: Finch, str_dict: dict) -> None:
+    
     print("h_alloc - unimplemented")
 
 def h_divide(finch: Finch, str_dict: dict) -> None:
@@ -222,3 +223,4 @@ def set_flow(finch: Finch, str_dict: dict) -> None:
         reg = 2
     if int.from_bytes(finch.register[reg],'big') < len(finch.lexome) and int.from_bytes(finch.register[reg],'big') >= 0:
         finch.flow_h = int.from_bytes(finch.register[reg],'big')
+    finch.inc()
