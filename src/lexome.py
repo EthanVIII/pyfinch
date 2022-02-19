@@ -1,4 +1,3 @@
-from sympy import re
 from finch import Finch
 from visual import pretty
 import copy
@@ -221,5 +220,5 @@ def set_flow(finch: Finch, str_dict: dict) -> None:
     reg: int = next_nop(finch,str_dict)
     if reg == 3:
         reg = 2
-    if finch.register[reg] < len(finch.lexome) and finch.register[reg] >= 0:
-        finch.flow_h = finch.register[reg]
+    if int.from_bytes(finch.register[reg],'big') < len(finch.lexome) and int.from_bytes(finch.register[reg],'big') >= 0:
+        finch.flow_h = int.from_bytes(finch.register[reg],'big')
