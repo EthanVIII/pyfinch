@@ -4,6 +4,7 @@ import copy
 
 def run_op(str_dict: dict, finch: Finch) -> str:
     op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
+    print(finch)
     print(op)
     if finch.skip_next_op:
         if all(op != x for x in ('nop_A','nop_B','nop_C')):
@@ -11,6 +12,7 @@ def run_op(str_dict: dict, finch: Finch) -> str:
             finch.skip_next_op = False
             return op
     exec(op +"(finch,str_dict)")
+    
     return op
 
 def mutation(op) -> int:
@@ -249,6 +251,8 @@ def h_copy(finch: Finch, str_dict: dict) -> None:
     copy_elem: int = mutation(copy.copy(finch.lexome[finch.read_h]))
     finch.copy_buffer.append(copy_elem)
     finch.lexome[finch.writ_h] = copy_elem
+    finch.read_h = tinc(finch.read_h,len(finch.lexome))
+    finch.writ_h = tinc(finch.writ_h,len(finch.lexome))
     finch.inc()
 
 def h_search(finch: Finch, str_dict: dict) -> None:
@@ -258,6 +262,7 @@ def h_search(finch: Finch, str_dict: dict) -> None:
         finch.register[1] = bytearray((0).to_bytes(1,'big'))
         finch.register[2] = bytearray((0).to_bytes(1,'big'))
         finch.flow_h = tinc(finch.inst_h,len(finch.lexome))
+        finch.inc()
         return
     # preprocess lexome
     lexome_copy: bytearray = bytearray(finch.lexome[finch.inst_h:] + finch.lexome[:finch.inst_h])
@@ -271,17 +276,17 @@ def h_search(finch: Finch, str_dict: dict) -> None:
             if not is_added: 
                 ptr_list.append(pos)
                 is_added = True
-            temp_holder.append(1)
+            temp_holder.append(0)
         elif str_dict[b.to_bytes(1,'big')] == 'nop_B':
             if not is_added: 
                 ptr_list.append(pos)
                 is_added = True
-            temp_holder.append(2)
+            temp_holder.append(1)
         elif str_dict[b.to_bytes(1,'big')] == 'nop_C':
             if not is_added: 
                 ptr_list.append(pos)
                 is_added = True            
-            temp_holder.append(0)
+            temp_holder.append(2)
         elif temp_holder != []:
             check_list.append(temp_holder)
             is_added = False
@@ -297,6 +302,7 @@ def h_search(finch: Finch, str_dict: dict) -> None:
                 finch.register[1] = bytearray((finch.flow_h - finch.inst_h).to_bytes(1,'big'))
             else:
                 finch.register[1] = bytearray(((len(finch.lexome) - finch.inst_h) + finch.flow_h + 1).to_bytes(1,'big'))
+            finch.inc()
             return
 
     finch.register[1] = bytearray((0).to_bytes(1,'big'))
@@ -308,9 +314,10 @@ def h_search(finch: Finch, str_dict: dict) -> None:
 # Toss up on if there is no label what the behaviour is.
 def if_label(finch: Finch, str_dict: dict) -> None:
     next_nops: tuple[list[int],int] = next_comp_nop_list(finch, str_dict)
+    print(finch.copy_buffer)
     if next_nops[0] != []:
         for index, op in enumerate(finch.copy_buffer[-next_nops[1]:]):
-            if str_dict[op] != next_nops[0][index]:
+            if str_dict[(op).to_bytes(1,'big')] == next_nops[0][index]:
                 finch.inc()
                 return
         finch.skip_next_op = True
