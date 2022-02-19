@@ -1,3 +1,4 @@
+from sympy import re
 from finch import Finch
 from visual import pretty
 import copy
@@ -29,6 +30,8 @@ def next_nop(finch: Finch, str_dict: dict) -> int:
     elif next_str == "nop_C":
         return 2
     return 3
+
+#---------------------- CPU Operations ----------------------#
 
 # Instruction No-Ops
 def nop_B(finch: Finch, str_dict: dict) -> None:
@@ -214,4 +217,9 @@ def if_label(finch: Finch, str_dict: dict) -> None:
     print("if_label - unimplemented")
 
 def set_flow(finch: Finch, str_dict: dict) -> None:
-    print("set_flow - unimplemented")
+    # ?CX?
+    reg: int = next_nop(finch,str_dict)
+    if reg == 3:
+        reg = 2
+    if finch.register[reg] < len(finch.lexome) and finch.register[reg] >= 0:
+        finch.flow_h = finch.register[reg]

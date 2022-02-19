@@ -49,7 +49,7 @@ def runInterface() -> None:
         else:
             exec(action[0][1])
 
-# Handles the display menus - easily updateable.
+# Handles the display menus - easily updatable.
 def optionHandler(option: str = "", get: bool=False) -> list[tuple[str,str]]:
     options: list[tuple[str,str]] = []
     options.append(("Run Simulation - Run a preset simulation","run_sim()"))
