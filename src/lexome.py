@@ -2,26 +2,18 @@ from finch import Finch
 from visual import pretty
 import copy
 
-def run_op(str_dict: dict, finch: Finch) -> str:
-    print(finch.inst_h)
-    print(finch.lexome)
-    print(finch.lexome[finch.inst_h])
-    print(finch.lexome[finch.inst_h].to_bytes(1,'big'))
+def run_op(str_dict: dict, finch: Finch) -> int:
     op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
     if finch.skip_next_op:
         if all(op != x for x in ('nop_A','nop_B','nop_C')):
             finch.inc()
             finch.skip_next_op = False
-            return op
-    print(finch)
-    pretty("INFO",op)
+            return 0
     buff: str = ""
     for x in finch.copy_buffer:
         buff += str_dict[x.to_bytes(1,'big')]  + ","
-    print(buff)
-    exec(op +"(finch,str_dict)")
-    
-    return op
+    exec(op + "(finch,str_dict)")
+    return 0
 
 def mutation(op) -> int:
     return op
@@ -222,12 +214,12 @@ def jmp_head(finch: Finch, str_dict: dict) -> None:
     if head == 3:
         head = 0
     if head == 0:
-        finch.inst_h = tinc(finch.inst_h,len(finch.lexome),finch.register[2])
+        finch.inst_h = tinc(finch.inst_h,len(finch.lexome),int.from_bytes(finch.register[2],'big'))
     elif head == 1:
-        finch.read_h = tinc(finch.read_h,len(finch.lexome),finch.register[2])
+        finch.read_h = tinc(finch.read_h,len(finch.lexome),int.from_bytes(finch.register[2],'big'))
         finch.inc()
     elif head == 2:
-        finch.writ_h = tinc(finch.read_h,len(finch.lexome),finch.register[2])
+        finch.writ_h = tinc(finch.read_h,len(finch.lexome),int.from_bytes(finch.register[2],'big'))
         finch.inc()
 
 def get_head(finch: Finch, str_dict: dict) -> None:
@@ -254,11 +246,14 @@ def h_alloc(finch: Finch, str_dict: dict) -> None:
 # IP will be incremented then too.
 def h_divide(finch: Finch, str_dict: dict) -> None:
     finch.init_divide = True
+    finch.copy_buffer = bytearray()
+
 
 def h_copy(finch: Finch, str_dict: dict) -> None:
-    copy_elem: int = mutation(copy.copy(finch.lexome[finch.read_h]))
-    finch.copy_buffer.append(copy_elem)
-    finch.lexome[finch.writ_h] = copy_elem
+    if finch.writ_h < len(finch.lexome) and finch.read_h < len(finch.lexome):
+        copy_elem: int = mutation(copy.copy(finch.lexome[finch.read_h]))
+        finch.copy_buffer.append(copy_elem)
+        finch.lexome[finch.writ_h] = copy_elem
     finch.read_h = tinc(finch.read_h,len(finch.lexome))
     finch.writ_h += 1
     finch.inc()
@@ -334,12 +329,9 @@ def if_label(finch: Finch, str_dict: dict) -> None:
                 buffer_tail_nops.append(2)
             else:
                 buffer_tail_nops.append(3)
-        print(next_nops[0])
-        print(buffer_tail_nops)
         if next_nops[0] == buffer_tail_nops:
             finch.inc()
-            return
-        print("Incomplete")
+            return None
         finch.skip_next_op = True
     finch.inc()
 
