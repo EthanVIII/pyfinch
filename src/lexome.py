@@ -1,10 +1,10 @@
-from numpy import byte
 from finch import Finch
 from visual import pretty
 import copy
 
 def run_op(str_dict: dict, finch: Finch) -> str:
     op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
+    print(op)
     if finch.skip_next_op:
         if all(op != x for x in ('nop_A','nop_B','nop_C')):
             finch.inc()
@@ -49,11 +49,11 @@ def next_comp_nop_list(finch: Finch, str_dict: dict) -> tuple[list[int],int]:
     ptr: int = tinc(finch.inst_h, len(finch.lexome))
     # Bad practice lmao ik dw.
     while True:
-        if str_dict[finch.lexome[ptr]] == 'nop_A':
+        if str_dict[finch.lexome[ptr].to_bytes(1,'big')] == 'nop_A':
             ret_register.append(1)
-        elif str_dict[finch.lexome[ptr]] == 'nop_B':
+        elif str_dict[finch.lexome[ptr].to_bytes(1,'big')] == 'nop_B':
             ret_register.append(2)
-        elif str_dict[finch.lexome[ptr]] == 'nop_C':
+        elif str_dict[finch.lexome[ptr].to_bytes(1,'big')] == 'nop_C':
             ret_register.append(0)
         else: break
         ptr = tinc(ptr,len(finch.lexome))
@@ -237,14 +237,13 @@ def get_head(finch: Finch, str_dict: dict) -> None:
 # Currently is set to the length of the ori org.
 def h_alloc(finch: Finch, str_dict: dict) -> None:
     finch.register[0] = bytearray(len(finch.lexome))
-    finch.lexome.append(len(finch.lexome))
+    finch.lexome.extend(bytearray(len(finch.lexome)))
     finch.inc()
     
 # Special Command that needs to happen by the aviary controller.
 # IP will be incremented then too.
 def h_divide(finch: Finch, str_dict: dict) -> None:
     finch.init_divide = True
-    print("h_divide - unimplemented")
 
 def h_copy(finch: Finch, str_dict: dict) -> None:
     copy_elem: int = mutation(copy.copy(finch.lexome[finch.read_h]))
@@ -260,7 +259,6 @@ def h_search(finch: Finch, str_dict: dict) -> None:
         finch.register[2] = bytearray((0).to_bytes(1,'big'))
         finch.flow_h = tinc(finch.inst_h,len(finch.lexome))
         return
-
     # preprocess lexome
     lexome_copy: bytearray = bytearray(finch.lexome[finch.inst_h:] + finch.lexome[:finch.inst_h])
     temp_holder: list[int] = []
@@ -289,7 +287,8 @@ def h_search(finch: Finch, str_dict: dict) -> None:
             is_added = False
             temp_holder = []
         pos = tinc(pos, len(finch.lexome))
-    
+    ptr_list = ptr_list[1:]
+    check_list = check_list[1:]
     for index, c in enumerate(check_list):
         if next_nops[0] == c:
             finch.flow_h = ptr_list[index]
@@ -299,10 +298,11 @@ def h_search(finch: Finch, str_dict: dict) -> None:
             else:
                 finch.register[1] = bytearray(((len(finch.lexome) - finch.inst_h) + finch.flow_h + 1).to_bytes(1,'big'))
             return
-            
+
     finch.register[1] = bytearray((0).to_bytes(1,'big'))
     finch.register[2] = bytearray((0).to_bytes(1,'big'))
     finch.flow_h = tinc(finch.inst_h,len(finch.lexome))
+    finch.inc()
 
 
 # Toss up on if there is no label what the behaviour is.

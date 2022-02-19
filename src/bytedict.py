@@ -32,6 +32,7 @@ def to_dict(lexomes: list[str]) -> dict:
 
 # Using a provided dictionary, translates a lexome to bytearrays.
 def translate_to_bytes(org: list[str],l_dict: dict) -> bytearray:
+    
     ret_bytes: bytearray = bytearray()
     for o in org:
         ret_bytes.extend(l_dict[o])
