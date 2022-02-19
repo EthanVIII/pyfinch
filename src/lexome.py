@@ -1,3 +1,4 @@
+from numpy import byte
 from finch import Finch
 from visual import pretty
 import copy
@@ -252,14 +253,63 @@ def h_copy(finch: Finch, str_dict: dict) -> None:
     finch.inc()
 
 def h_search(finch: Finch, str_dict: dict) -> None:
+    # Extract next nops next_comp_nop_list(finch: Finch, str_dict: dict) -> tuple[list[int],int]
+    next_nops: tuple[list[int],int] = next_comp_nop_list(finch,str_dict)
+    if next_nops[0] == []:
+        finch.register[1] = bytearray((0).to_bytes(1,'big'))
+        finch.register[2] = bytearray((0).to_bytes(1,'big'))
+        finch.flow_h = tinc(finch.inst_h,len(finch.lexome))
+        return
+
+    # preprocess lexome
+    lexome_copy: bytearray = bytearray(finch.lexome[finch.inst_h:] + finch.lexome[:finch.inst_h])
+    temp_holder: list[int] = []
+    ptr_list: list[int] = []
+    is_added: bool = False
+    check_list: list[list[int]] = []
+    pos: int = finch.inst_h
+    for b in lexome_copy:
+        if str_dict[b.to_bytes(1,'big')] == 'nop_A':
+            if not is_added: 
+                ptr_list.append(pos)
+                is_added = True
+            temp_holder.append(1)
+        elif str_dict[b.to_bytes(1,'big')] == 'nop_B':
+            if not is_added: 
+                ptr_list.append(pos)
+                is_added = True
+            temp_holder.append(2)
+        elif str_dict[b.to_bytes(1,'big')] == 'nop_C':
+            if not is_added: 
+                ptr_list.append(pos)
+                is_added = True            
+            temp_holder.append(0)
+        elif temp_holder != []:
+            check_list.append(temp_holder)
+            is_added = False
+            temp_holder = []
+        pos = tinc(pos, len(finch.lexome))
     
-    print("h_search - unimplemented")
+    for index, c in enumerate(check_list):
+        if next_nops[0] == c:
+            finch.flow_h = ptr_list[index]
+            finch.register[2] = bytearray(next_nops[1].to_bytes(1,'big'))
+            if finch.flow_h >= finch.inst_h:
+                finch.register[1] = bytearray((finch.flow_h - finch.inst_h).to_bytes(1,'big'))
+            else:
+                finch.register[1] = bytearray(((len(finch.lexome) - finch.inst_h) + finch.flow_h + 1).to_bytes(1,'big'))
+            return
+            
+    finch.register[1] = bytearray((0).to_bytes(1,'big'))
+    finch.register[2] = bytearray((0).to_bytes(1,'big'))
+    finch.flow_h = tinc(finch.inst_h,len(finch.lexome))
+
 
 # Toss up on if there is no label what the behaviour is.
 def if_label(finch: Finch, str_dict: dict) -> None:
     next_nops: tuple[list[int],int] = next_comp_nop_list(finch, str_dict)
     if next_nops[0] != []:
-        for op, index in enumerate(finch.copy_buffer[-next_nops[1]:]):
+        for index, op in enumerate(finch.copy_buffer[-next_nops[1]:]):
             if str_dict[op] != next_nops[0][index]:
                 finch.inc()
                 return

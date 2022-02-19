@@ -18,3 +18,5 @@ io
 mov_head
 jmp_head
 get_head
+h_copy
+if_label
