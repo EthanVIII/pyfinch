@@ -17,7 +17,9 @@ class Finch:
         
         # Attributes
         self.age: int = 0
+        self.init_divide: bool = False
         self.skip_next_op: bool = False
+        self.copy_buffer: bytearray = bytearray()
 
         # C
         del i32_BA

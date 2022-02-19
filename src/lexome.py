@@ -4,9 +4,19 @@ import copy
 
 def run_op(str_dict: dict, finch: Finch) -> str:
     op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
+    if finch.skip_next_op:
+        if all(op != x for x in ('nop_A','nop_B','nop_C')):
+            finch.inc()
+            finch.skip_next_op = False
+            return op
     exec(op +"(finch,str_dict)")
     return op
 
+def mutation(op) -> int:
+    return op
+
+# Theoretically increment a pointer on a looped array.
+# Calculates outcome.
 def tinc(current: int, length: int, step=1) -> int:
     if current+step >= length:
         return current + step - length
@@ -20,6 +30,8 @@ def comp(register: int) -> int:
         return 0 
     return register + 1
 
+
+# Returns the next nop if there is one. otherwise returns 3.
 def next_nop(finch: Finch, str_dict: dict) -> int:
     next_str: str = str_dict[finch.lexome[tinc(finch.inst_h, len(finch.lexome))].to_bytes(1,'big')]
     if next_str == "nop_A":
@@ -29,6 +41,28 @@ def next_nop(finch: Finch, str_dict: dict) -> int:
     elif next_str == "nop_C":
         return 2
     return 3
+
+# Returns the next list of complement nops if there is one, otherwise returns blank bytearray.
+def next_comp_nop_list(finch: Finch, str_dict: dict) -> tuple[list[int],int]:
+    ret_register: list[int] = []
+    ptr: int = tinc(finch.inst_h, len(finch.lexome))
+    # Bad practice lmao ik dw.
+    while True:
+        if str_dict[finch.lexome[ptr]] == 'nop_A':
+            ret_register.append(1)
+        elif str_dict[finch.lexome[ptr]] == 'nop_B':
+            ret_register.append(2)
+        elif str_dict[finch.lexome[ptr]] == 'nop_C':
+            ret_register.append(0)
+        else: break
+        ptr = tinc(ptr,len(finch.lexome))
+    
+    # ptr is now length of nop.
+    if ptr > finch.inst_h:
+        ptr = ptr - finch.inst_h - 1
+    else:
+        ptr = (len(finch.lexome) - finch.inst_h - 1) + (ptr - 1)
+    return (ret_register, ptr)
 
 #---------------------- CPU Operations ----------------------#
 
@@ -47,8 +81,6 @@ def if_n_equ(finch: Finch, str_dict: dict) -> None:
         reg = 1
     if finch.register[reg] == finch.register[comp(reg)]:
         finch.skip_next_op = True
-    else:
-        finch.skip_next_op = False
     finch.inc()
 
 def if_less(finch: Finch, str_dict: dict) -> None:
@@ -58,8 +90,6 @@ def if_less(finch: Finch, str_dict: dict) -> None:
         reg = 1
     if finch.register[reg] >= finch.register[comp(reg)]:
         finch.skip_next_op = True
-    else:
-        finch.skip_next_op = False
     finch.inc()
 
 def pop(finch: Finch, str_dict: dict) -> None:
@@ -170,9 +200,10 @@ def mov_head(finch: Finch, str_dict: dict) -> None:
         finch.inst_h = copy.copy(finch.flow_h)
     elif head == 1:
         finch.read_h = copy.copy(finch.flow_h)
+        finch.inc()
     elif head == 2:
         finch.writ_h = copy.copy(finch.flow_h)
-    finch.inc()
+        finch.inc()
 
 def jmp_head(finch: Finch, str_dict: dict) -> None:
     # ?IP?
@@ -183,9 +214,10 @@ def jmp_head(finch: Finch, str_dict: dict) -> None:
         finch.inst_h = tinc(finch.inst_h,len(finch.lexome),finch.register[2])
     elif head == 1:
         finch.read_h = tinc(finch.read_h,len(finch.lexome),finch.register[2])
+        finch.inc()
     elif head == 2:
         finch.writ_h = tinc(finch.read_h,len(finch.lexome),finch.register[2])
-    finch.inc()
+        finch.inc()
 
 def get_head(finch: Finch, str_dict: dict) -> None:
     # ?IP?
@@ -200,21 +232,39 @@ def get_head(finch: Finch, str_dict: dict) -> None:
         finch.register[2] = bytearray(finch.writ_h.to_bytes(4,'big'))
     finch.inc()
     
+# Allocates the maximum length for offspring replication.
+# Currently is set to the length of the ori org.
 def h_alloc(finch: Finch, str_dict: dict) -> None:
+    finch.register[0] = bytearray(len(finch.lexome))
+    finch.lexome.append(len(finch.lexome))
+    finch.inc()
     
-    print("h_alloc - unimplemented")
-
+# Special Command that needs to happen by the aviary controller.
+# IP will be incremented then too.
 def h_divide(finch: Finch, str_dict: dict) -> None:
+    finch.init_divide = True
     print("h_divide - unimplemented")
 
 def h_copy(finch: Finch, str_dict: dict) -> None:
-    print("h_copy - unimplemented")
+    copy_elem: int = mutation(copy.copy(finch.lexome[finch.read_h]))
+    finch.copy_buffer.append(copy_elem)
+    finch.lexome[finch.writ_h] = copy_elem
+    finch.inc()
 
 def h_search(finch: Finch, str_dict: dict) -> None:
+    
     print("h_search - unimplemented")
 
+# Toss up on if there is no label what the behaviour is.
 def if_label(finch: Finch, str_dict: dict) -> None:
-    print("if_label - unimplemented")
+    next_nops: tuple[list[int],int] = next_comp_nop_list(finch, str_dict)
+    if next_nops[0] != []:
+        for op, index in enumerate(finch.copy_buffer[-next_nops[1]:]):
+            if str_dict[op] != next_nops[0][index]:
+                finch.inc()
+                return
+        finch.skip_next_op = True
+    finch.inc()
 
 def set_flow(finch: Finch, str_dict: dict) -> None:
     # ?CX?
