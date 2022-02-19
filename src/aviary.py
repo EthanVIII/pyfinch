@@ -16,7 +16,8 @@ def run_aviary(
             finches.append(Finch(l))
     pretty("INFO","Innoculated with starting Pop")
     pretty("INFO","Running Simulation...")
-    for i in range(1000):
+    while True:
+        input()
         print("Pop: {}".format(str(len(finches))))
         for finch in finches:
             run_op(str_dict,finch)
@@ -32,12 +33,15 @@ def init_divide(finch: Finch, unborn: list[Finch]) -> None:
     new_org_lexome: bytearray = finch.lexome[finch.read_h:tinc(finch.writ_h,len(finch.lexome))]
     new_org: Finch = Finch(new_org_lexome)
     finch.lexome = finch.lexome[:finch.read_h]
+    print("New Org lexome: ")
+    print(new_org_lexome)
+    print("Old org lexome: ")
+    print(finch.lexome)
     if finch.inst_h > len(finch.lexome):
-        finch.inst_h = 0
-    finch.read_h = len(finch.lexome) - 1
-    finch.writ_h = len(finch.lexome) - 1
+        finch.inst_h = len(finch.lexome)-1
     if finch.flow_h > len(finch.lexome):
         finch.flow_h = len(finch.lexome) - 1
+    finch.inc()
     unborn.append(new_org)
 
 def replication_queue(finches: list[Finch], unborn: list[Finch]) -> None:

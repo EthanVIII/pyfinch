@@ -1,16 +1,16 @@
-h_alloc    # Allocate space for child
-h_search   # Locate the end of the organism
-nop_C      #  
-nop_A      #
-mov_head   # Place write_head at beginning of offspring.
-nop_C      #
-nop_C      #
-h_search   # Mark the beginning of the copy loop
-h_copy     # Do the copy
-if_label   # If we're done copying....
-nop_C      #
-nop_A      #
-h_divide   #    ...divide!
-mov_head   # Otherwise, loop back to the beginning of the copy loop.
-nop_A      # End label.
-nop_B      #
+h_alloc    #0 Allocate space for child
+h_search   #1 Locate the end of the organism
+nop_C      #2  
+nop_A      #3
+mov_head   #4 Place write_head at beginning of offspring.
+nop_C      #5
+nop_C      #6
+h_search   #7 Mark the beginning of the copy loop
+h_copy     #8 Do the copy
+if_label   #9 If we're done copying....
+nop_C      #10
+nop_A      #11
+h_divide   #12    ...divide!
+mov_head   #13 Otherwise, loop back to the beginning of the copy loop.
+nop_A      #14 End label.
+nop_B      #15

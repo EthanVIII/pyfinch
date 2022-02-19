@@ -3,14 +3,22 @@ from visual import pretty
 import copy
 
 def run_op(str_dict: dict, finch: Finch) -> str:
+    print(finch.inst_h)
+    print(finch.lexome)
+    print(finch.lexome[finch.inst_h])
+    print(finch.lexome[finch.inst_h].to_bytes(1,'big'))
     op: str = str_dict[finch.lexome[finch.inst_h].to_bytes(1,'big')]
-    print(finch)
-    print(op)
     if finch.skip_next_op:
         if all(op != x for x in ('nop_A','nop_B','nop_C')):
             finch.inc()
             finch.skip_next_op = False
             return op
+    print(finch)
+    pretty("INFO",op)
+    buff: str = ""
+    for x in finch.copy_buffer:
+        buff += str_dict[x.to_bytes(1,'big')]  + ","
+    print(buff)
     exec(op +"(finch,str_dict)")
     
     return op
@@ -239,7 +247,7 @@ def get_head(finch: Finch, str_dict: dict) -> None:
 # Currently is set to the length of the ori org.
 def h_alloc(finch: Finch, str_dict: dict) -> None:
     finch.register[0] = bytearray(len(finch.lexome))
-    finch.lexome.extend(bytearray(len(finch.lexome)))
+    finch.lexome.extend(bytearray(b'\x00' * (len(finch.lexome))))
     finch.inc()
     
 # Special Command that needs to happen by the aviary controller.
@@ -252,7 +260,7 @@ def h_copy(finch: Finch, str_dict: dict) -> None:
     finch.copy_buffer.append(copy_elem)
     finch.lexome[finch.writ_h] = copy_elem
     finch.read_h = tinc(finch.read_h,len(finch.lexome))
-    finch.writ_h = tinc(finch.writ_h,len(finch.lexome))
+    finch.writ_h += 1
     finch.inc()
 
 def h_search(finch: Finch, str_dict: dict) -> None:
@@ -273,21 +281,22 @@ def h_search(finch: Finch, str_dict: dict) -> None:
     pos: int = finch.inst_h
     for b in lexome_copy:
         if str_dict[b.to_bytes(1,'big')] == 'nop_A':
-            if not is_added: 
-                ptr_list.append(pos)
-                is_added = True
+            # if not is_added: 
+            #     ptr_list.append(pos)
+            #     is_added = True
             temp_holder.append(0)
         elif str_dict[b.to_bytes(1,'big')] == 'nop_B':
-            if not is_added: 
-                ptr_list.append(pos)
-                is_added = True
+            # if not is_added: 
+            #     ptr_list.append(pos)
+            #     is_added = True
             temp_holder.append(1)
         elif str_dict[b.to_bytes(1,'big')] == 'nop_C':
-            if not is_added: 
-                ptr_list.append(pos)
-                is_added = True            
+            # if not is_added: 
+            #     ptr_list.append(pos)
+            #     is_added = True            
             temp_holder.append(2)
         elif temp_holder != []:
+            ptr_list.append(pos)
             check_list.append(temp_holder)
             is_added = False
             temp_holder = []
@@ -314,12 +323,23 @@ def h_search(finch: Finch, str_dict: dict) -> None:
 # Toss up on if there is no label what the behaviour is.
 def if_label(finch: Finch, str_dict: dict) -> None:
     next_nops: tuple[list[int],int] = next_comp_nop_list(finch, str_dict)
-    print(finch.copy_buffer)
+    buffer_tail_nops: list[int] = []
     if next_nops[0] != []:
-        for index, op in enumerate(finch.copy_buffer[-next_nops[1]:]):
-            if str_dict[(op).to_bytes(1,'big')] == next_nops[0][index]:
-                finch.inc()
-                return
+        for x in finch.copy_buffer[-next_nops[1]:]:
+            if str_dict[x.to_bytes(1,'big')] == 'nop_A':
+                buffer_tail_nops.append(0)
+            elif str_dict[x.to_bytes(1,'big')] == 'nop_B':
+                buffer_tail_nops.append(1)
+            elif str_dict[x.to_bytes(1,'big')] == 'nop_C':
+                buffer_tail_nops.append(2)
+            else:
+                buffer_tail_nops.append(3)
+        print(next_nops[0])
+        print(buffer_tail_nops)
+        if next_nops[0] == buffer_tail_nops:
+            finch.inc()
+            return
+        print("Incomplete")
         finch.skip_next_op = True
     finch.inc()
 
